@@ -35,86 +35,35 @@
         </div>
     </div>
 
+
     <div id="san-pham" class="mb-4">
         <h2 class="pb-2 border-bottom mb-4 text-center text-uppercase text-secondary">Sản Phẩm Nổi Bật</h2>
 
         <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-4">
-
-            <div class="col">
-                <div class="card h-100 shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400&q=80" class="card-img-top" alt="Táo Đỏ" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h5 class="card-title text-success">Táo Đỏ Mỹ</h5>
-                        <p class="card-text text-muted">Giòn, ngọt, nhiều nước, nhập khẩu trực tiếp.</p>
-                        <h6 class="text-danger fw-bold">120.000đ / kg</h6>
-                    </div>
-                    <div class="card-footer bg-transparent border-top-0 d-grid gap-2">
-                        <form method="post">
-                            <input type="hidden" name="productId" value="1" />
-                            <button type="submit" asp-page-handler="AddToCart" class="btn btn-outline-success w-100">
-                                Thêm vào giỏ
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col">
-                <div class="card h-100 shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1537640538965-17565236b589?w=400&q=80" class="card-img-top" alt="Cam Vàng" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h5 class="card-title text-success">Cam Vàng Úc</h5>
-                        <p class="card-text text-muted">Vỏ mỏng, mọng nước, giàu Vitamin C.</p>
-                        <h6 class="text-danger fw-bold">85.000đ / kg</h6>
-                    </div>
-                    <div class="card-footer bg-transparent border-top-0 d-grid gap-2">
-                        <form method="post">
-                            <input type="hidden" name="productId" value="2" />
-                            <button type="submit" asp-page-handler="AddToCart" class="btn btn-outline-success w-100">
-                                Thêm vào giỏ
-                            </button>
-                        </form>
+            @foreach (var product in Model.products)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <img src="" class="card-img-top" alt="Táo Đỏ" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title text-success">@product.Name</h5>
+                            <p class="card-text text-muted">@product.Description</p>
+                            <h6 class="text-danger fw-bold">@product.Price / @product.Unit.Name</h6>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0 d-grid gap-2">
+                            <form method="post">
+                                <input type="hidden" name="productId" value="1" />
+                                <button type="submit" class="btn btn-outline-success w-100">
+                                    Thêm vào giỏ
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
+            }
+            
 
-            <div class="col">
-                <div class="card h-100 shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1587049359509-b788043259ac?w=400&q=80" class="card-img-top" alt="Dâu Tây" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h5 class="card-title text-success">Dâu Tây Đà Lạt</h5>
-                        <p class="card-text text-muted">Chín mọng, vị chua ngọt tự nhiên.</p>
-                        <h6 class="text-danger fw-bold">250.000đ / hộp</h6>
-                    </div>
-                    <div class="card-footer bg-transparent border-top-0 d-grid gap-2">
-                        <form method="post">
-                            <input type="hidden" name="productId" value="3" />
-                            <button type="submit" asp-page-handler="AddToCart" class="btn btn-outline-success w-100">
-                                Thêm vào giỏ
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col">
-                <div class="card h-100 shadow-sm">
-                    <img src="https://images.unsplash.com/photo-1595111953930-58837130dfd0?w=400&q=80" class="card-img-top" alt="Nho Xanh" style="height: 200px; object-fit: cover;">
-                    <div class="card-body">
-                        <h5 class="card-title text-success">Nho Xanh Không Hạt</h5>
-                        <p class="card-text text-muted">Giòn tan, ngọt lịm, chùm to đẹp mắt.</p>
-                        <h6 class="text-danger fw-bold">180.000đ / kg</h6>
-                    </div>
-                    <div class="card-footer bg-transparent border-top-0 d-grid gap-2">
-                        <form method="post">
-                            <input type="hidden" name="productId" value="4" />
-                            <button type="submit" asp-page-handler="AddToCart" class="btn btn-outline-success w-100">
-                                Thêm vào giỏ
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+           
 
         </div>
     </div>
