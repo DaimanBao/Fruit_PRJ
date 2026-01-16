@@ -364,3 +364,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /Fruit_PRJ/appsettings.Development.json
 /Fruit_PRJ/appsettings.Development.json
+/Fruit_PRJ/wwwroot/uploads/products
+/Fruit_PRJ/Models/FruitStoreDbContext.cs
