@@ -362,3 +362,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Fruit_PRJ/Fruit_PRJ.csproj
+/Fruit_PRJ/appsettings.Development.json
