@@ -1,0 +1,165 @@
+﻿@page "/productsdetail/{id:int?}"
+@model Fruit_Store_PRJ.Areas.Admin.Pages.Products.ProductDetailModel
+@{
+    ViewData["Title"] = "Chi tiết sản phẩm";
+    var product = Model.product;
+}
+
+@if (Model.product == null)
+{
+    <div class="container my-5 shadow-sm p-5 bg-white rounded-3 text-center">
+        <h3 class="text-muted">Rất tiếc, sản phẩm không tồn tại!</h3>
+        <a asp-page="Index" class="btn btn-success mt-3 px-4">Quay lại cửa hàng</a>
+    </div>
+    return;
+}
+
+<div class="container py-5">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-page="Index" class="text-success text-decoration-none">Sản phẩm</a></li>
+            <li class="breadcrumb-item active">@product.Name</li>
+        </ol>
+    </nav>
+
+    <div class="row g-5">
+        <div class="col-md-6 col-lg-5">
+            <div class="product-gallery">
+                @{
+                    var mainImage = product.ProductImages?.FirstOrDefault(i => i.IsMain);
+                }
+                <div class="main-img-card mb-3 shadow-sm border rounded-4 overflow-hidden bg-white">
+                    <img id="zoomImg" src="@(mainImage?.ImageUrl ?? "https://placehold.co/600x600")"
+                         class="img-fluid w-100" style="object-fit: cover; aspect-ratio: 1/1;"
+                         alt="@product.Name">
+                </div>
+
+                <div class="row g-2">
+                    @foreach (var img in product.ProductImages)
+                    {
+                        <div class="col-3">
+                            <div class="thumb-container border rounded-3 @(img.IsMain ? "border-success border-2" : "")"
+                                 onclick="document.getElementById('zoomImg').src='@img.ImageUrl'" role="button">
+                                <img src="@img.ImageUrl" class="img-fluid rounded-2" alt="thumbnail">
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-7">
+            <div class="product-info-content">
+                <div class="mb-2">
+                    <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill">
+                        @product.Category?.Name
+                    </span>
+                    <span class="ms-2 text-muted small">SKU: @product.Sku</span>
+                </div>
+
+                <h1 class="display-6 fw-bold text-dark mb-3">@product.Name</h1>
+
+                <div class="d-flex align-items-baseline mb-4">
+                    <h2 class="text-danger fw-bold mb-0">@product.Price.ToString("N0") đ</h2>
+                    <span class="text-muted ms-2 fs-5">/ @product.Unit?.Name</span>
+                </div>
+
+                <div class="row g-3 mb-4 py-3 border-top border-bottom">
+                    <div class="col-6">
+                        <small class="text-muted d-block">Xuất xứ</small>
+                        <span class="fw-semibold"><i class="fa-solid fa-earth-asia me-1 text-success"></i>@product.Origin?.Name</span>
+                    </div>
+                    <div class="col-6 border-start">
+                        <small class="text-muted d-block">Trạng thái kho</small>
+                        <span class="fw-semibold text-dark">@product.Stock @product.Unit?.Name sẵn có</span>
+                    </div>
+                </div>
+
+                <p class="text-secondary mb-4" style="line-height: 1.7;">
+                    @product.Description
+                </p>
+
+                <form method="post" asp-page-handler="AddToCart">
+                    <input type="hidden" name="productId" value="@product.Id" />
+
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="quantity-input border rounded-pill d-flex align-items-center px-2">
+                            <button type="button" class="btn btn-link text-dark p-2" onclick="this.parentNode.querySelector('input').stepDown()"><i class="fa-solid fa-minus"></i></button>
+                            <input type="number" name="quantity" value="1" min="1" max="@product.Stock" class="form-control border-0 text-center bg-transparent" style="width: 50px;">
+                            <button type="button" class="btn btn-link text-dark p-2" onclick="this.parentNode.querySelector('input').stepUp()"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        <span class="text-muted small">Tối đa @product.Stock @product.Unit?.Name</span>
+                    </div>
+
+                    <div class="d-flex gap-3">
+                        <button type="submit" class="btn btn-success btn-lg px-5 py-3 rounded-pill shadow-sm flex-grow-1 flex-md-grow-0">
+                            <i class="fa-solid fa-cart-shopping me-2"></i>Thêm vào giỏ
+                        </button>
+
+                        <button type="button" class="btn btn-outline-dark btn-lg px-5 py-3 rounded-pill shadow-sm flex-grow-1 flex-md-grow-0">
+                            Mua ngay
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-5 p-4 bg-light rounded-4 border-0">
+                    <div class="row g-3">
+                        <div class="col-6 col-md-4 text-center">
+                            <i class="fa-solid fa-truck text-success fs-4 mb-2"></i>
+                            <p class="small mb-0">Giao nhanh 2h</p>
+                        </div>
+                        <div class="col-6 col-md-4 text-center border-start">
+                            <i class="fa-solid fa-leaf text-success fs-4 mb-2"></i>
+                            <p class="small mb-0">100% Hữu cơ</p>
+                        </div>
+                        <div class="col-6 col-md-4 text-center border-start d-none d-md-block">
+                            <i class="fa-solid fa-rotate-left text-success fs-4 mb-2"></i>
+                            <p class="small mb-0">Đổi trả 24h</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .thumb-container {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: #fff;
+        padding: 4px;
+    }
+
+        .thumb-container:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+    .quantity-input input::-webkit-outer-spin-button,
+    .quantity-input input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        content: "\f105";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        font-size: 12px;
+    }
+</style>
+
+@if (TempData["Message"] != null)
+{
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055">
+        <div class="toast show align-items-center text-white bg-success border-0 shadow-lg" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fa-solid fa-check-circle me-2"></i> @TempData["Message"]
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+}

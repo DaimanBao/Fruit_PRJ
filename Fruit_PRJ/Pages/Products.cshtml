@@ -1,0 +1,205 @@
+﻿@page
+@model Fruit_Store_PRJ.Areas.Admin.Pages.Products.Products
+@{
+    ViewData["Title"] = "Cửa hàng";
+}
+
+<div class="container py-4">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-success">Trang chủ</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Tất cả sản phẩm</li>
+        </ol>
+    </nav>
+
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-info alert-dismissible fade show" role="alert">
+            @Model.Message
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            <form method="get">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3 fs-6 fw-bold">Tìm kiếm</h5>
+                        <div class="input-group">
+                            <input type="text" class="form-control form-control-sm" asp-for="SearchKeyword" placeholder="Tìm sản phẩm...">
+                            <button class="btn btn-success btn-sm" type="submit"><i class="bi bi-search"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-success text-white py-2">
+                        <h5 class="mb-0 fs-6">Danh Mục</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <label class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <input class="form-check-input me-1" type="radio" name="FilterCategoryId" value="" @(Model.FilterCategoryId == null ? "checked" : "") onchange="this.form.submit()">
+                                <span class="@(Model.FilterCategoryId == null ? "fw-bold text-dark" : "text-secondary")">Tất cả</span>
+                            </div>
+                        </label>
+                        @foreach (var cat in Model.categories)
+                        {
+                            <label class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <input class="form-check-input me-1" type="radio" name="FilterCategoryId" value="@cat.Id" @(Model.FilterCategoryId == cat.Id ? "checked" : "") onchange="this.form.submit()">
+                                    <span class="@(Model.FilterCategoryId == cat.Id ? "fw-bold text-dark" : "text-secondary")">@cat.Name</span>
+                                </div>
+                            </label>
+                        }
+                    </div>
+                </div>
+
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3 fs-6 fw-bold">Trạng thái</h5>
+                        <select asp-for="FilterStatus" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="1">Đang bán</option>
+                            <option value="2">Hết hàng</option>
+                            <option value="3">Ngừng kinh doanh</option>
+                        </select>
+
+                        <h5 class="card-title mb-3 mt-3 fs-6 fw-bold">Xuất xứ</h5>
+                        <select asp-for="FilterOriginId" class="form-select form-select-sm" onchange="this.form.submit()"
+                                asp-items="@(new SelectList(Model.origins, "Id", "Name"))">
+                            <option value="">Tất cả nơi bán</option>
+                        </select>
+
+                        <a asp-page="./Products" class="btn btn-link btn-sm text-success p-0 mt-3 text-decoration-none">Xóa tất cả bộ lọc</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded shadow-sm border">
+                <span class="text-muted small">
+                    Hiển thị <strong>@Model.products.Count</strong> trên <strong>@Model.TotalItems</strong> sản phẩm
+                </span>
+                <div class="d-flex align-items-center">
+                    <label class="me-2 text-nowrap text-secondary small">Trang:</label>
+                    <span class="badge bg-light text-dark border">@Model.PageIndex / @Model.TotalPages</span>
+                </div>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                @if (Model.products != null && Model.products.Any())
+                {
+                    @foreach (var p in Model.products)
+                    {
+                        <div class="col">
+                            <div class="card h-100 shadow-sm border-0 position-relative product-card @(p.Stock <= 0 ? "opacity-75" : "")">
+                                @if (p.Stock <= 0)
+                                {
+                                    <span class="position-absolute top-0 end-0 badge bg-secondary m-2">Hết hàng</span>
+                                }
+                                else if (p.Status == 1)
+                                {
+                                    <span class="position-absolute top-0 start-0 badge bg-success m-2">Sẵn có</span>
+                                }
+
+                                @{
+                                    var mainImg = p.ProductImages?.FirstOrDefault(x => x.IsMain)?.ImageUrl
+                                    ?? p.ProductImages?.FirstOrDefault()?.ImageUrl
+                                    ?? "https://placehold.co/400x300?text=No+Image";
+                                }
+                                <img src="@mainImg" class="card-img-top" alt="@p.Name" style="height: 200px; object-fit: cover; @(p.Stock <= 0 ? "filter: grayscale(80%);" : "")">
+
+                                <div class="card-body">
+                                    <small class="text-success fw-bold">@p.Category?.Name</small>
+                                    <h5 class="card-title mt-1">
+                                        <a href="#" class="text-decoration-none text-dark fs-6 fw-bold">@p.Name</a>
+                                    </h5>
+                                    <div class="mb-2">
+                                        <span class="fw-bold text-danger fs-5">@p.Price.ToString("N0")đ</span>
+                                        <span class="text-muted small">/@p.Unit?.Name</span>
+                                    </div>
+                                    <p class="card-text small text-muted text-truncate-2">@p.Description</p>
+                                </div>
+
+                                <div class="card-footer bg-white border-top-0 pb-3">
+                                    @if (p.Stock > 0 && p.Status != 3)
+                                    {
+                                        <form method="post">
+                                            <input type="hidden" name="productId" value="@p.Id" />
+                                            <button type="submit" asp-page-handler="AddToCart" class="btn btn-outline-success w-100 rounded-pill btn-sm">
+                                                <i class="bi bi-cart-plus me-1"></i> Thêm vào giỏ
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-secondary w-100 rounded-pill btn-sm" disabled>Tạm hết hàng</button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-search fs-1 text-muted"></i>
+                        <p class="mt-3 text-muted">Không tìm thấy sản phẩm nào phù hợp.</p>
+                    </div>
+                }
+            </div>
+
+            @if (Model.TotalPages > 1)
+            {
+                <nav class="mt-5 d-flex justify-content-center">
+                    <ul class="pagination pagination-sm">
+                        <li class="page-item @(Model.PageIndex == 1 ? "disabled" : "")">
+                            <a class="page-link" asp-all-route-data='new Dictionary<string, string> { { "PageIndex", (Model.PageIndex - 1).ToString() }, { "SearchKeyword", Model.SearchKeyword ?? "" }, { "FilterCategoryId", Model.FilterCategoryId?.ToString() ?? "" } }'>Trước</a>
+                        </li>
+
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                                <a class="page-link @(i == Model.PageIndex ? "bg-success border-success" : "text-success")"
+                                   asp-route-PageIndex="@i"
+                                   asp-route-SearchKeyword="@Model.SearchKeyword"
+                                   asp-route-FilterCategoryId="@Model.FilterCategoryId">@i</a>
+                            </li>
+                        }
+
+                        <li class="page-item @(Model.PageIndex == Model.TotalPages ? "disabled" : "")">
+                            <a class="page-link" asp-route-PageIndex="@(Model.PageIndex + 1)"
+                               asp-route-SearchKeyword="@Model.SearchKeyword"
+                               asp-route-FilterCategoryId="@Model.FilterCategoryId">Sau</a>
+                        </li>
+                    </ul>
+                </nav>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .product-card {
+        transition: transform 0.2s;
+    }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .text-truncate-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .form-check-input:checked {
+        background-color: #198754;
+        border-color: #198754;
+    }
+</style>
