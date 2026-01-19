@@ -12,6 +12,13 @@ builder.Services.AddDbContext<FruitStoreDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddDistributedMemoryCache(); // B?t bu?c ?? l?u cache cho Session
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Th?i gian h?t h?n gi? hàng
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 //Scoped Services
 builder.Services.AddScoped<ProductServices>();
 builder.Services.AddScoped<ImageServices>();
@@ -34,7 +41,11 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseStaticFiles();
+
 app.UseRouting();
+
+app.UseSession();
 
 app.UseAuthorization();
 
